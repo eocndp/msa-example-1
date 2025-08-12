@@ -9,7 +9,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule)
 
     const redisClient = redis.createClient({
-        url: 'redis://localhost:6379',
+        url: process.env.REDIS_URL ?? 'redis://localhost:6379',
     })
 
     redisClient.on('error', (err) => {
@@ -25,7 +25,7 @@ async function bootstrap() {
     app.use(
         session({
             store: new RedisStore({ client: redisClient }),
-            secret: 'mySecretKey',
+            secret: process.env.SESSION_SECRET ?? 'mySecretKey',
             resave: false,
             saveUninitialized: false,
             cookie: {

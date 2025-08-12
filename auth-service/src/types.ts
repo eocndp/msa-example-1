@@ -1,5 +1,3 @@
-import { Request } from "@nestjs/common"
-
 export interface Session {
     userId: string
 }
