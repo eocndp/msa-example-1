@@ -4,6 +4,22 @@ import * as session from 'express-session'
 import * as redis from 'redis'
 import * as express from 'express'
 import { RedisStore } from 'connect-redis'
+import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager'
+
+async function getSessionSecret(): Promise<string> {
+    const client = new SecretsManagerClient({
+        region: process.env.AWS_REGION,
+    })
+
+    const command = new GetSecretValueCommand({ SecretId: process.env.SESSION_SECRET_NAME })
+    const response = await client.send(command)
+
+    if (!response.SecretString) {
+        throw new Error('SecretString not found')
+    }
+
+    return response.SecretString
+}
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule)
@@ -25,7 +41,7 @@ async function bootstrap() {
     app.use(
         session({
             store: new RedisStore({ client: redisClient }),
-            secret: process.env.SESSION_SECRET!,
+            secret: await getSessionSecret(),
             resave: false,
             saveUninitialized: false,
             cookie: {
