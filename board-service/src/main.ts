@@ -6,7 +6,7 @@ import * as express from 'express'
 import { RedisStore } from 'connect-redis'
 import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager'
 
-async function getSessionSecret(): Promise<string> {
+async function getSecret(): Promise<Record<string, string>> {
     const client = new SecretsManagerClient({
         region: process.env.AWS_REGION,
     })
@@ -18,7 +18,7 @@ async function getSessionSecret(): Promise<string> {
         throw new Error('SecretString not found')
     }
 
-    return response.SecretString
+    return JSON.parse(response.SecretString)
 }
 
 async function bootstrap() {
@@ -38,10 +38,12 @@ async function bootstrap() {
 
     await redisClient.connect()
 
+    const secret = await getSecret()
+
     app.use(
         session({
             store: new RedisStore({ client: redisClient }),
-            secret: await getSessionSecret(),
+            secret: secret['session_secret_key'],
             resave: false,
             saveUninitialized: false,
             cookie: {
@@ -54,8 +56,8 @@ async function bootstrap() {
 
     app.use(express.json())
 
-    await app.listen(3002)
-    console.log(`Posts service running on http://localhost:3002`)
+    await app.listen(process.env.PORT ?? 3002)
+    console.log(`Posts service running on http://localhost:${process.env.PORT ?? 3002}`)
 }
 
 bootstrap()
