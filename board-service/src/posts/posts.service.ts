@@ -2,13 +2,14 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
 import { Post } from './post.entity'
+import { CreatePostDto } from './dto/create.dto'
 
 @Injectable()
 export class PostsService {
     constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
 
-    async create(title: string, content: string, authorId: string): Promise<Post> {
-        const post = new this.postModel({ title, content, authorId })
+    async create(dto: CreatePostDto, authorId: string): Promise<Post> {
+        const post = new this.postModel({ ...dto, authorId })
         return post.save()
     }
 

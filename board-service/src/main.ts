@@ -9,7 +9,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule)
 
     const redisClient = redis.createClient({
-        url: process.env.REDIS_URL ?? 'redis://localhost:6379',
+        url: process.env.REDIS_URL!,
     })
 
     redisClient.on('error', (err) => {
@@ -25,19 +25,21 @@ async function bootstrap() {
     app.use(
         session({
             store: new RedisStore({ client: redisClient }),
-            secret: process.env.SESSION_SECRET ?? 'mySecretKey',
+            secret: process.env.SESSION_SECRET!,
             resave: false,
             saveUninitialized: false,
             cookie: {
                 secure: false,
                 httpOnly: true,
-                maxAge: 1000 * 60 * 60 * 24,
+                maxAge: 1000 * 60 * 60 * 24, // 1 day
             },
         })
     )
 
     app.use(express.json())
+ 
     await app.listen(3002)
     console.log(`Posts service running on http://localhost:3002`)
 }
+
 bootstrap()

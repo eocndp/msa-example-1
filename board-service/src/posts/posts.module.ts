@@ -12,8 +12,6 @@ import { SessionAuthMiddleware } from '../middleware/session-auth.middleware'
 })
 export class PostsModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(SessionAuthMiddleware)
-            .forRoutes('posts') // 모든 posts 라우트에 인증 적용
+        consumer.apply(SessionAuthMiddleware).forRoutes('posts')
     }
 }

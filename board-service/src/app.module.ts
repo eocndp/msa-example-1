@@ -6,7 +6,7 @@ import { PostsModule } from './posts/posts.module'
 @Module({
     imports: [
         ConfigModule.forRoot({ isGlobal: true }),
-        MongooseModule.forRoot(process.env.MONGODB_URI ?? 'mongodb://localhost:27017/posts-db'),
+        MongooseModule.forRoot(process.env.MONGODB_URI!),
         PostsModule,
     ],
 })

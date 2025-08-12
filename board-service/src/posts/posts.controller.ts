@@ -9,14 +9,17 @@ import {
     Req,
 } from '@nestjs/common'
 import { PostsService } from './posts.service'
+import { RequestWithSession } from 'src/types'
+import { CreatePostDto } from './dto/create.dto'
+import { UpdatePostDto } from './dto/update.dto'
 
 @Controller('posts')
 export class PostsController {
     constructor(private postsService: PostsService) {}
 
     @HttpPost()
-    create(@Body() body, @Req() req) {
-        return this.postsService.create(body.title, body.content, req.session.userId)
+    create(@Body() dto: CreatePostDto, @Req() req: RequestWithSession) {
+        return this.postsService.create(dto, req.session.userId)
     }
 
     @Get()
@@ -30,12 +33,12 @@ export class PostsController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() body, @Req() req) {
-        return this.postsService.update(id, body, req.session.userId)
+    update(@Param('id') id: string, @Body() dto: UpdatePostDto, @Req() req: RequestWithSession) {
+        return this.postsService.update(id, dto, req.session.userId)
     }
 
     @Delete(':id')
-    delete(@Param('id') id: string, @Req() req) {
+    delete(@Param('id') id: string, @Req() req: RequestWithSession) {
         return this.postsService.delete(id, req.session.userId)
     }
 }
