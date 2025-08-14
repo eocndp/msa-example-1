@@ -56,7 +56,7 @@ async function bootstrap() {
 
     app.use(express.json())
 
-    await app.listen(process.env.PORT ?? 3002)
+    await app.listen(process.env.PORT ?? 3000)
     console.log(`Posts service running on http://localhost:${process.env.PORT ?? 3002}`)
 }
 
