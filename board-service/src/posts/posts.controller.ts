@@ -17,6 +17,11 @@ import { UpdatePostDto } from './dto/update.dto'
 export class PostsController {
     constructor(private postsService: PostsService) {}
 
+    @Get('health')
+    healthCheck() {
+        return { status: 'ok' }
+    }
+
     @HttpPost()
     create(@Body() dto: CreatePostDto, @Req() req: RequestWithSession) {
         return this.postsService.create(dto, req.session.userId)

@@ -9,6 +9,11 @@ import { LoginDto } from './dto/login.dto'
 export class AuthController {
     constructor(private authService: AuthService) {}
 
+    @Get('health')
+    healthCheck() {
+        return { status: 'ok' }
+    }
+
     @Post('register')
     async register(@Body() body: RegisterDto, @Res() res: Response) {
         try {
